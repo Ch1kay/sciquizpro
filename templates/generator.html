@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SciQuizPro | Quiz Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body class="min-h-screen">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 backdrop-filter backdrop-blur-lg bg-opacity-30 bg-gray-900 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <img src="https://ucc.edu.jm/sites/default/files/images/NEW_UCC_logo.jpg" alt="UCC Logo" class="h-10 rounded">
+                    <div>
+                        <h1 class="text-xl font-bold">SciQuizPro</h1>
+                        <p class="text-xs text-gray-400">Powered by Mistral 7B</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('index') }}" class="nav-link text-white hover:text-blue-200 font-medium">Home</a>
+                    <a href="{{ url_for('generator') }}" class="nav-link active text-white hover:text-blue-200 font-medium">Quiz Generator</a>
+                    <a href="{{ url_for('index') }}#features" class="nav-link text-white hover:text-blue-200 font-medium">Features</a>
+                    <a href="{{ url_for('index') }}#about" class="nav-link text-white hover:text-blue-200 font-medium">About</a>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-white" onclick="toggleMobileMenu()">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-gray-900 py-4">
+            <div class="container mx-auto px-4 flex flex-col space-y-3">
+                <a href="{{ url_for('index') }}" class="text-white hover:text-blue-200 font-medium py-2">Home</a>
+                <a href="{{ url_for('generator') }}" class="text-white hover:text-blue-200 font-medium py-2">Quiz Generator</a>
+                <a href="{{ url_for('index') }}#features" class="text-white hover:text-blue-200 font-medium py-2">Features</a>
+                <a href="{{ url_for('index') }}#about" class="text-white hover:text-blue-200 font-medium py-2">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-24 pb-12">
+        <div class="max-w-3xl mx-auto">
+            <!-- Page Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold mb-2">Science Quiz Generator</h1>
+                <p class="text-gray-400">Create custom science quizzes for your classroom in seconds</p>
+            </div>
+
+            <!-- AI Disclaimer Banner -->
+            <div class="bg-yellow-900 bg-opacity-20 border border-yellow-700 rounded-lg p-4 mb-8 disclaimer flex items-start">
+                <div class="text-yellow-500 mr-3 flex-shrink-0 mt-1">
+                    <i data-feather="alert-triangle" class="h-5 w-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-yellow-400 font-medium mb-1">Local LLM Notice</h3>
+                    <p class="text-yellow-300 text-sm">
+                        This application uses a locally hosted Mistral 7B model fine-tuned on the SciQ dataset.
+                        While our fine-tuning improves accuracy for science education content, the model may
+                        occasionally produce inaccurate information. Please review generated questions
+                        before using them in educational settings.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Generator Form -->
+            <div class="bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-feather="settings" class="h-5 w-5 mr-2 text-indigo-400"></i>
+                    Quiz Settings
+                </h2>
+
+                <form id="quizForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="category" class="block text-gray-300 mb-2 font-medium">Science Category</label>
+                            <select id="category" class="select-field w-full px-4 py-2.5">
+                                <option value="">Select a category</option>
+                                <option value="earth">Earth Science</option>
+                                <option value="biology">Biology</option>
+                                <option value="chemistry">Chemistry</option>
+                                <option value="physics">Physics</option>
+                                <option value="space">Space Science</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="subtopic" class="block text-gray-300 mb-2 font-medium">Topic</label>
+                            <select id="subtopic" class="select-field w-full px-4 py-2.5">
+                                <option value="">Select a category first</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="numQuestions" class="block text-gray-300 mb-2 font-medium">Number of Questions</label>
+                            <select id="numQuestions" class="select-field w-full px-4 py-2.5">
+                                <option value="5">5 Questions</option>
+                                <option value="10">10 Questions</option>
+                                <option value="15">15 Questions</option>
+                                <option value="20">20 Questions</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="gradeLevel" class="block text-gray-300 mb-2 font-medium">Grade Level</label>
+                            <select id="gradeLevel" class="select-field w-full px-4 py-2.5">
+                                <option value="elementary school">Elementary School</option>
+                                <option value="middle school" selected>Middle School</option>
+                                <option value="high school">High School</option>
+                                <option value="college">College</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="temperature" class="block text-gray-300 mb-2 font-medium">Temperature</label>
+                            <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.2" class="w-full">
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>More Focused (0.0)</span>
+                                <span id="tempValue">0.2</span>
+                                <span>More Creative (1.0)</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="modelParams" class="block text-gray-300 mb-2 font-medium">Advanced Options</label>
+                            <button type="button" id="advancedToggle" class="select-field w-full px-4 py-2.5 text-left flex justify-between items-center">
+                                <span>Model Parameters</span>
+                                <i data-feather="chevron-down" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div id="advancedPanel" class="hidden bg-gray-700 bg-opacity-50 p-4 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="topP" class="block text-gray-300 mb-1 text-sm font-medium">Top P</label>
+                                <input type="range" id="topP" min="0.1" max="1" step="0.05" value="0.95" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>0.1</span>
+                                    <span id="topPValue">0.95</span>
+                                    <span>1.0</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="maxTokens" class="block text-gray-300 mb-1 text-sm font-medium">Max Tokens</label>
+                                <select id="maxTokens" class="select-field w-full px-3 py-2 text-sm">
+                                    <option value="2000">2000 tokens</option>
+                                    <option value="4000" selected>4000 tokens</option>
+                                    <option value="6000">6000 tokens</option>
+                                    <option value="8000">8000 tokens</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3">These parameters control how the Mistral 7B model generates text. Default values are optimized for quiz generation.</p>
+                    </div>
+
+                    <div id="errorMessage" class="text-red-500 text-sm hidden"></div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn-primary text-white px-6 py-2.5 rounded-lg font-medium flex items-center">
+                            <i data-feather="play" class="h-5 w-5 mr-2"></i>
+                            <span>Generate Quiz</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loading items-center justify-center py-16">
+                <div class="flex flex-col items-center">
+                    <div class="relative w-16 h-16 mb-4">
+                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-indigo-200 border-opacity-20 rounded-full"></div>
+                        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <p class="text-gray-400 text-lg">Generating your quiz with Mistral 7B...</p>
+                    <p class="text-gray-500 text-sm mt-2">This may take a few moments as the model processes your request locally</p>
+                </div>
+            </div>
+
+            <!-- Quiz Results Container -->
+            <div id="quizContainer" class="quiz-container bg-gray-800 rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold" id="quizTitle">Generated Quiz</h2>
+                    <div class="flex space-x-4">
+                        <button id="printButton" class="text-indigo-400 hover:text-indigo-300 font-medium flex items-center print-hide">
+                            <i data-feather="printer" class="h-5 w-5 mr-1.5"></i>
+                            Print Quiz
+                        </button>
+                    </div>
+                </div>
+
+                <div id="questionsContainer" class="space-y-6"></div>
+
+                <div class="mt-8 pt-4 border-t border-gray-700 text-xs text-gray-500 print-hide">
+                    <p class="flex items-center">
+                        <i data-feather="info" class="h-4 w-4 mr-1.5"></i>
+                        Generated by SciQuizPro - Custom Fine-tuned Mistral 7B model (SciQ dataset)
+                    </p>
+                    <p class="mt-1.5 ml-5.5">Note: Locally generated content with Ollama. Please verify before educational use.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 print-hide">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <img src="https://ucc.edu.jm/sites/default/files/images/NEW_UCC_logo.jpg" alt="UCC Logo" class="h-10 mr-3 rounded">
+                    <div>
+                        <h3 class="text-lg font-bold">SciQuizPro</h3>
+                        <p class="text-gray-400 text-sm">© 2025 - All rights reserved</p>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-gray-400">Powered by Custom Fine-tuned Mistral 7B</p>
+                    <p class="text-sm text-gray-500 mt-1">Local LLM with Ollama - SciQ dataset trained</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-6 pt-6 text-center text-sm text-gray-500">
+                <p>University of the Commonwealth Caribbean - School of Mathematics, Science & Technology</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Feather icons
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+
+            const categorySelect = document.getElementById('category');
+            const subtopicSelect = document.getElementById('subtopic');
+            const quizForm = document.getElementById('quizForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingIndicator = document.querySelector('.loading');
+            const quizContainer = document.getElementById('quizContainer');
+            const quizTitle = document.getElementById('quizTitle');
+            const questionsContainer = document.getElementById('questionsContainer');
+            const printButton = document.getElementById('printButton');
+            const temperatureSlider = document.getElementById('temperature');
+            const tempValue = document.getElementById('tempValue');
+            const topPSlider = document.getElementById('topP');
+            const topPValue = document.getElementById('topPValue');
+            const advancedToggle = document.getElementById('advancedToggle');
+            const advancedPanel = document.getElementById('advancedPanel');
+
+            // Update temperature value display
+            temperatureSlider.addEventListener('input', function() {
+                tempValue.textContent = this.value;
+            });
+
+            // Update topP value display
+            topPSlider.addEventListener('input', function() {
+                topPValue.textContent = this.value;
+            });
+
+            // Toggle advanced panel
+            advancedToggle.addEventListener('click', function() {
+                advancedPanel.classList.toggle('hidden');
+                const icon = this.querySelector('svg');
+                if (advancedPanel.classList.contains('hidden')) {
+                    icon.setAttribute('data-feather', 'chevron-down');
+                } else {
+                    icon.setAttribute('data-feather', 'chevron-up');
+                }
+                feather.replace();
+            });
+
+            // Science categories and subtopics from the model_config
+            const scienceCategories = {
+                "earth": ["Geology", "Weather", "Climate", "Natural Disasters", "Earth's Structure", "Ecosystems"],
+                "biology": ["Human Body", "Plants", "Animals", "Cells", "Genetics", "Ecosystems"],
+                "chemistry": ["Elements", "Chemical Reactions", "States of Matter", "Periodic Table", "Acids and Bases"],
+                "physics": ["Forces", "Motion", "Energy", "Electricity", "Magnetism", "Light and Sound"],
+                "space": ["Solar System", "Stars", "Planets", "Space Exploration", "Galaxies"]
+            };
+
+            // Update subtopics when category changes
+            categorySelect.addEventListener('change', function() {
+                const category = this.value;
+                subtopicSelect.innerHTML = '';
+
+                if (category) {
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select a topic';
+                    subtopicSelect.appendChild(defaultOption);
+
+                    // Add subtopics for selected category
+                    scienceCategories[category].forEach(subtopic => {
+                        const option = document.createElement('option');
+                        option.value = subtopic;
+                        option.textContent = subtopic;
+                        subtopicSelect.appendChild(option);
+                    });
+                } else {
+                    // If no category selected, show default message
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'Select a category first';
+                    subtopicSelect.appendChild(option);
+                }
+            });
+
+            // Handle form submission
+            quizForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const category = categorySelect.value;
+                const subtopic = subtopicSelect.value;
+                const numQuestions = document.getElementById('numQuestions').value;
+                const gradeLevel = document.getElementById('gradeLevel').value;
+                const temperature = temperatureSlider.value;
+                const topP = topPSlider.value;
+                const maxTokens = document.getElementById('maxTokens').value;
+
+                // Validate inputs
+                if (!category || !subtopic) {
+                    errorMessage.textContent = 'Please select both a category and a topic';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
+                errorMessage.classList.add('hidden');
+                loadingIndicator.classList.add('show');
+                quizContainer.classList.remove('show');
+
+                // Call the API to generate the quiz
+                fetch('/generate_quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: category,
+                        subtopic: subtopic,
+                        numQuestions: numQuestions,
+                        gradeLevel: gradeLevel,
+                        temperature: temperature,
+                        top_p: topP,
+                        max_tokens: maxTokens
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loadingIndicator.classList.remove('show');
+
+                    if (data.success) {
+                        displayQuiz(data.quiz, subtopic, gradeLevel);
+                    } else {
+                        errorMessage.textContent = data.error || 'Failed to generate quiz. Please try again.';
+                        errorMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.classList.remove('show');
+                    errorMessage.textContent = 'An error occurred communicating with the Ollama API. Please make sure Ollama is running.';
+                    errorMessage.classList.remove('hidden');
+                    console.error('Error:', error);
+                });
+            });
+
+            // Display the quiz
+            function displayQuiz(quiz, subtopic, gradeLevel) {
+                quizTitle.textContent = `${subtopic} Quiz (${gradeLevel})`;
+                questionsContainer.innerHTML = '';
+
+                quiz.forEach((question, index) => {
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'question-card bg-gray-700 bg-opacity-50 p-5 rounded-lg';
+
+                    // Ensure options exist and is an array before mapping
+                    const optionsHtml = Array.isArray(question.options) ? question.options.map((option, oIndex) => `
+                        <div class="flex items-start mb-3 md:mb-2">
+                            <div class="option-circle ${option === question.correctAnswer ? 'correct-answer bg-green-700 text-green-100' : 'bg-gray-600 text-gray-300'}
+                                    w-7 h-7 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                ${['A', 'B', 'C', 'D'][oIndex]}
+                            </div>
+                            <div class="flex-1">
+                                <p>${option}</p>
+                                ${option === question.correctAnswer ?
+                                    '<div class="flex items-center mt-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span class="text-sm text-green-400">Correct answer</span></div>'
+                                    : ''}
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-red-400 ml-6">Error: Options not found or invalid.</p>';
+
+                    questionElement.innerHTML = `
+                        <div class="mb-4">
+                            <p class="text-lg font-medium mb-2">
+                                <span class="text-indigo-400 mr-2">${index + 1}.</span>
+                                ${question.question || 'Error: Question text missing.'}
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                           ${optionsHtml}
+                        </div>
+                    `;
+
+                    questionsContainer.appendChild(questionElement);
+                });
+
+                quizContainer.classList.add('show');
+            }
+
+            // Handle print button
+            printButton.addEventListener('click', function() {
+                window.print();
+            });
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

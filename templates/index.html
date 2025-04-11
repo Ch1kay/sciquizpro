@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SciQuizPro | AI-Powered Science Quiz Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body class="min-h-screen">
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 backdrop-filter backdrop-blur-lg bg-opacity-30 bg-gray-900 border-b border-gray-800">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div>
+                        <h1 class="text-xl font-bold">SciQuizPro</h1>
+                        <p class="text-xs text-gray-400">Powered by Mistral 7B</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('index') }}" class="nav-link active text-white hover:text-blue-200 font-medium">Home</a>
+                    <a href="{{ url_for('generator') }}" class="nav-link text-white hover:text-blue-200 font-medium">Quiz Generator</a>
+                    <a href="#features" class="nav-link text-white hover:text-blue-200 font-medium">Features</a>
+                    <a href="#about" class="nav-link text-white hover:text-blue-200 font-medium">About</a>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-white" onclick="toggleMobileMenu()">
+                        <i data-feather="menu"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-gray-900 py-4">
+            <div class="container mx-auto px-4 flex flex-col space-y-3">
+                <a href="{{ url_for('index') }}" class="text-white hover:text-blue-200 font-medium py-2">Home</a>
+                <a href="{{ url_for('generator') }}" class="text-white hover:text-blue-200 font-medium py-2">Quiz Generator</a>
+                <a href="#features" class="text-white hover:text-blue-200 font-medium py-2">Features</a>
+                <a href="#about" class="text-white hover:text-blue-200 font-medium py-2">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-background relative pt-28 pb-40 overflow-hidden">
+        <div class="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">Generate Engaging Science Quizzes in Seconds</h1>
+                <p class="text-xl text-blue-100 mb-8">Powered by a custom fine-tuned Mistral 7B model trained on the SciQ dataset to deliver accurate, educational content for classrooms.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="{{ url_for('generator') }}" class="btn-primary text-white px-8 py-3 rounded-lg font-medium text-lg inline-block text-center">
+                        Create Quiz
+                        <i data-feather="arrow-right" class="inline ml-2 h-5 w-5"></i>
+                    </a>
+                    <a href="#features" class="bg-white bg-opacity-10 hover:bg-opacity-20 text-white px-8 py-3 rounded-lg font-medium text-lg inline-block text-center">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative">
+                <div class="floating">
+                    <img src="https://ucc.edu.jm/sites/default/files/images/NEW_UCC_logo.jpg" alt="UCC Logo" class="app-screenshot w-full max-w-md mx-auto">
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 opacity-20 rounded-lg"></div>
+                </div>
+            </div>
+        </div>
+        <div class="wave"></div>
+
+        <!-- Stats section -->
+        <div class="container mx-auto px-4 absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="stat-card p-6 rounded-xl text-center">
+                    <h3 class="text-3xl font-bold mb-2">Complete</h3>
+                    <p class="text-gray-300">Educational Tool</p>
+                </div>
+                <div class="stat-card p-6 rounded-xl text-center">
+                    <h3 class="text-3xl font-bold mb-2">Locally Hosted</h3>
+                    <p class="text-gray-300">Mistral 7B Model</p>
+                </div>
+                <div class="stat-card p-6 rounded-xl text-center">
+                    <h3 class="text-3xl font-bold mb-2">Customizable</h3>
+                    <p class="text-gray-300">Quiz Generation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="bg-blue-900 bg-opacity-30 text-blue-400 text-sm font-medium px-4 py-1.5 rounded-full mb-4 inline-block">Features</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Everything You Need for Science Quizzes</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Discover how SciQuizPro can help you create engaging, educational content for your science classroom.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-blue-500 mb-4">
+                        <i data-feather="layers" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Multiple Science Categories</h3>
+                    <p class="text-gray-400">Generate questions across Earth Science, Biology, Chemistry, Physics, and Space Science.</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-green-500 mb-4">
+                        <i data-feather="sliders" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Adjustable Difficulty</h3>
+                    <p class="text-gray-400">Create quizzes appropriate for Elementary, Middle School, High School or College levels.</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-purple-500 mb-4">
+                        <i data-feather="cpu" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Local LLM Processing</h3>
+                    <p class="text-gray-400">Powered by a fine-tuned Mistral 7B model running locally with Ollama for privacy and control.</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-yellow-500 mb-4">
+                        <i data-feather="printer" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Print-Ready Format</h3>
+                    <p class="text-gray-400">Print your quizzes directly from the browser with properly formatted layouts.</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-red-500 mb-4">
+                        <i data-feather="shield" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Privacy-Focused</h3>
+                    <p class="text-gray-400">All processing happens locally - no data leaves your network, making it suitable for educational environments.</p>
+                </div>
+
+                <div class="feature-card p-6 rounded-xl">
+                    <div class="text-blue-500 mb-4">
+                        <i data-feather="activity" class="h-10 w-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">SciQ Dataset</h3>
+                    <p class="text-gray-400">Fine-tuned on the SciQ dataset to provide accurate, educational science content.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-16 bg-gray-900 bg-opacity-40">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-1.5 rounded-full mb-4 inline-block">How It Works</span>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Generate a Quiz in 4 Simple Steps</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Follow this simple process to create custom science quizzes for your classroom.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row">
+                <div class="timeline md:w-3/4 mx-auto relative">
+                    <!-- Step 1 -->
+                    <div class="flex mb-12 items-start relative">
+                        <div class="absolute left-6 top-0 h-full w-0.5 bg-indigo-600" style="left: 21px;"></div>
+                        <div class="bg-indigo-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold flex-shrink-0 z-10">1</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-semibold mb-2">Select Category & Topic</h3>
+                            <p class="text-gray-400">Choose from our comprehensive list of science categories and specific topics to focus your quiz.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex mb-12 items-start relative">
+                        <div class="absolute left-6 top-0 h-full w-0.5 bg-indigo-600" style="left: 21px;"></div>
+                        <div class="bg-indigo-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold flex-shrink-0 z-10">2</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-semibold mb-2">Set Parameters</h3>
+                            <p class="text-gray-400">Specify the number of questions and appropriate grade level for your students.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex mb-12 items-start relative">
+                        <div class="absolute left-6 top-0 h-full w-0.5 bg-indigo-600" style="left: 21px;"></div>
+                        <div class="bg-indigo-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold flex-shrink-0 z-10">3</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-semibold mb-2">Generate Quiz</h3>
+                            <p class="text-gray-400">Our custom fine-tuned Mistral 7B model will create carefully crafted multiple-choice questions based on your selections.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex items-start relative">
+                        <div class="bg-indigo-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold flex-shrink-0 z-10">4</div>
+                        <div class="ml-8">
+                            <h3 class="text-xl font-semibold mb-2">Print or Save</h3>
+                            <p class="text-gray-400">Print your quiz directly or review and modify as needed for your classroom use.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="bg-blue-900 bg-opacity-30 text-blue-400 text-sm font-medium px-4 py-1.5 rounded-full mb-4 inline-block">About the Project</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Powered by Mistral 7B, Fine-tuned for Education</h2>
+                </div>
+
+                <div class="bg-gray-800 bg-opacity-50 p-8 rounded-2xl mb-12">
+                    <h3 class="text-2xl font-semibold mb-4">Custom Fine-Tuning Process</h3>
+                    <p class="text-gray-300 mb-4">
+                        SciQuizPro is powered by a Mistral 7B model fine-tuned on the SciQ dataset, a collection of 13,679 crowdsourced
+                        science exam questions covering physics, chemistry, biology, and other science topics. Using LORA fine-tuning with
+                        8-bit quantization, we've optimized the model specifically for educational content generation.
+                    </p>
+                    <p class="text-gray-300">
+                        The model runs locally on your machine using Ollama, ensuring privacy and control over your data. While our
+                        fine-tuned model strives for accuracy, it's important to note that AI-generated content may occasionally contain
+                        inaccuracies. We recommend that educators review all generated questions for educational
+                        accuracy before using them in the classroom.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 bg-opacity-50 p-6 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <i data-feather="check-circle" class="h-5 w-5 mr-2 text-green-500"></i>
+                            Local Processing
+                        </h3>
+                        <p class="text-gray-300">
+                            SciQuizPro runs entirely on your local machine using Ollama, providing
+                            high-quality educational content without the privacy concerns of cloud-based solutions.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-800 bg-opacity-50 p-6 rounded-xl">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center">
+                            <i data-feather="check-circle" class="h-5 w-5 mr-2 text-green-500"></i>
+                            Educational Focus
+                        </h3>
+                        <p class="text-gray-300">
+                            Designed specifically for science education, SciQuizPro helps teachers create engaging, curriculum-aligned
+                            content that challenges students at their appropriate grade level.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="gradient-background py-16 relative">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Create Your First Quiz?</h2>
+            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+                Start generating custom science quizzes for your classroom today with our locally-hosted, fine-tuned Mistral model.
+            </p>
+            <a href="{{ url_for('generator') }}" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-medium text-lg inline-block hover:bg-gray-100 transition-all">
+                Get Started Now
+            </a>
+            <p class="text-sm text-blue-200 mt-4">Requires Ollama running locally. No additional account required.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <img src="https://ucc.edu.jm/sites/default/files/images/NEW_UCC_logo.jpg" alt="UCC Logo" class="h-12 mr-4 rounded">
+                    <div>
+                        <h3 class="text-xl font-bold">SciQuizPro</h3>
+                        <p class="text-gray-400">© 2025 - All rights reserved</p>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-gray-400">Powered by Custom Fine-tuned Mistral 7B</p>
+                    <p class="text-sm text-gray-500 mt-1">Local LLM with Ollama - SciQ dataset trained</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>Disclaimer: This application uses a fine-tuned Mistral 7B model. The AI may occasionally produce inaccurate information.</p>
+                <p class="mt-2">University of the Commonwealth Caribbean - School of Mathematics, Science & Technology</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Feather icons
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
